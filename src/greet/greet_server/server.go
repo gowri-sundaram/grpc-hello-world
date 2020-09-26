@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+    "context"
     "google.golang.org/grpc"
     "grpc-hello-world/src/greet/greetpb"
     "log"
@@ -9,8 +9,18 @@ import (
 )
 
 type server struct {}
+
+func (s *server) Greet(ctx context.Context, in *greetpb.GreetRequest) (*greetpb.GreetResponse, error) {
+    log.Printf("Greet function was invoked with: %v\n", in)
+    name := in.GetGreeting().GetFirstName() + " " + in.GetGreeting().GetLastName()
+    resp := &greetpb.GreetResponse {
+        Result: "Hello " + name,
+    }
+    return resp, nil
+}
+
 func main() {
-    fmt.Println("Hello")
+    log.Println("Hello")
     listener, err := net.Listen("tcp", "0.0.0.0:50051")
     if err != nil {
         log.Fatalf("Failed to listen: %v", err)
